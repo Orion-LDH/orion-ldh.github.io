@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线科学计算器 - LDH's Blog</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .calculator {
+            max-width: 500px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: max-width 0.3s ease;
+        }
+        
+        .calculator.scientific {
+            max-width: 700px;
+        }
+        
+        .calculator-display {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            text-align: right;
+            font-size: 2rem;
+            font-weight: bold;
+            border-bottom: 1px solid #e9ecef;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .calculator-history {
+            background: #e9ecef;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            border-bottom: 1px solid #dee2e6;
+            min-height: 30px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+        }
+        
+        .calculator-buttons.scientific {
+            grid-template-columns: repeat(5, 1fr);
+        }
+        
+        .calculator-button {
+            background: white;
+            border: none;
+            padding: 1.5rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .calculator-button:hover {
+            background: #f8f9fa;
+        }
+        
+        .calculator-button:active {
+            background: #e9ecef;
+        }
+        
+        .calculator-button.operator {
+            background: #007bff;
+            color: white;
+        }
+        
+        .calculator-button.operator:hover {
+            background: #0056b3;
+        }
+        
+        .calculator-button.equals {
+            background: #28a745;
+            color: white;
+        }
+        
+        .calculator-button.equals:hover {
+            background: #1e7e34;
+        }
+        
+        .calculator-button.clear {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .calculator-button.clear:hover {
+            background: #c82333;
+        }
+        
+        .calculator-button.function {
+            background: #6f42c1;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .calculator-button.function:hover {
+            background: #5a32a3;
+        }
+        
+        .calculator-button.constant {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .calculator-button.constant:hover {
+            background: #e36209;
+        }
+        
+        .mode-toggle {
+            text-align: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .mode-toggle button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 0.5rem;
+        }
+        
+        .mode-toggle button:hover {
+            background: #0056b3;
+        }
+        
+        .mode-toggle button.active {
+            background: #28a745;
+        }
+        
+        @media (max-width: 768px) {
+            .calculator {
+                margin: 1rem;
+            }
+            
+            .calculator.scientific {
+                max-width: 100%;
+            }
+            
+            .calculator-button {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">LDH's Blog</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="game.html">游戏</a></li> 
+                    <li><a href="tools.html">工具</a></li>
+                    <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>在线科学计算器</h1>
+            <p>功能强大的科学计算器，支持标准计算和高级数学函数</p>
+            <a href="tools.html" class="btn"><i class="fas fa-arrow-left"></i> 返回工具列表</a>
+        </div>
+    </section>
+
+    <!-- Calculator -->
+    <div class="container">
+        <div class="calculator" id="calculator">
+            <div class="mode-toggle">
+                <button id="standardMode" class="active" onclick="setMode('standard')">标准模式</button>
+                <button id="scientificMode" onclick="setMode('scientific')">科学模式</button>
+            </div>
+            <div class="calculator-history" id="history"></div>
+            <div class="calculator-display" id="display">0</div>
+            <div class="calculator-buttons" id="buttons">
+                <!-- 标准模式按钮 -->
+                <button class="calculator-button clear" onclick="clearDisplay()">C</button>
+                <button class="calculator-button" onclick="appendToDisplay('/')">/</button>
+                <button class="calculator-button" onclick="appendToDisplay('*')">×</button>
+                <button class="calculator-button" onclick="deleteLast()">⌫</button>
+                
+                <button class="calculator-button" onclick="appendToDisplay('7')">7</button>
+                <button class="calculator-button" onclick="appendToDisplay('8')">8</button>
+                <button class="calculator-button" onclick="appendToDisplay('9')">9</button>
+                <button class="calculator-button operator" onclick="appendToDisplay('-')">-</button>
+                
+                <button class="calculator-button" onclick="appendToDisplay('4')">4</button>
+                <button class="calculator-button" onclick="appendToDisplay('5')">5</button>
+                <button class="calculator-button" onclick="appendToDisplay('6')">6</button>
+                <button class="calculator-button operator" onclick="appendToDisplay('+')">+</button>
+                
+                <button class="calculator-button" onclick="appendToDisplay('1')">1</button>
+                <button class="calculator-button" onclick="appendToDisplay('2')">2</button>
+                <button class="calculator-button" onclick="appendToDisplay('3')">3</button>
+                <button class="calculator-button" onclick="appendToDisplay('.')">.</button>
+                
+                <button class="calculator-button" onclick="appendToDisplay('0')">0</button>
+                <button class="calculator-button" onclick="appendToDisplay('(')">(</button>
+                <button class="calculator-button" onclick="appendToDisplay(')')">)</button>
+                <button class="calculator-button equals" onclick="calculate()">=</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <ul class="footer-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="game.html">游戏</a></li> 
+                <li><a href="tools.html">工具</a></li>
+                <li><a href="about.html">关于</a></li>
+            </ul>
+            <div class="copyright">
+                &copy; 2024 LDH's Blog. All rights reserved. | GitHub: <a href="https://github.com/Orion-LDH" target="_blank">Orion-LDH</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let display = document.getElementById('display');
+        let history = document.getElementById('history');
+        let buttons = document.getElementById('buttons');
+        let calculator = document.getElementById('calculator');
+        let currentInput = '0';
+        let previousInput = '';
+        let mode = 'standard';
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            updateDisplay();
+        }
+
+        function appendToDisplay(value) {
+            if (currentInput === '0' && value !== '.') {
+                currentInput = value;
+            } else {
+                currentInput += value;
+            }
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            
+            document.getElementById('standardMode').classList.toggle('active', newMode === 'standard');
+            document.getElementById('scientificMode').classList.toggle('active', newMode === 'scientific');
+            
+            calculator.classList.toggle('scientific', newMode === 'scientific');
+            buttons.classList.toggle('scientific', newMode === 'scientific');
+            
+            if (newMode === 'scientific') {
+                buttons.innerHTML = `
+                    <button class="calculator-button clear" onclick="clearDisplay()">C</button>
+                    <button class="calculator-button" onclick="appendToDisplay('(')">(</button>
+                    <button class="calculator-button" onclick="appendToDisplay(')')">)</button>
+                    <button class="calculator-button" onclick="appendToDisplay('%')">%</button>
+                    <button class="calculator-button" onclick="deleteLast()">⌫</button>
+                    
+                    <button class="calculator-button function" onclick="appendFunction('sin')">sin</button>
+                    <button class="calculator-button function" onclick="appendFunction('cos')">cos</button>
+                    <button class="calculator-button function" onclick="appendFunction('tan')">tan</button>
+                    <button class="calculator-button" onclick="appendToDisplay('^')">^</button>
+                    <button class="calculator-button operator" onclick="appendToDisplay('/')">/</button>
+                    
+                    <button class="calculator-button function" onclick="appendFunction('log')">log</button>
+                    <button class="calculator-button function" onclick="appendFunction('ln')">ln</button>
+                    <button class="calculator-button function" onclick="appendFunction('sqrt')">√</button>
+                    <button class="calculator-button constant" onclick="appendToDisplay(Math.PI)">π</button>
+                    <button class="calculator-button operator" onclick="appendToDisplay('*')">×</button>
+                    
+                    <button class="calculator-button">7</button>
+                    <button class="calculator-button">8</button>
+                    <button class="calculator-button">9</button>
+                    <button class="calculator-button constant" onclick="appendToDisplay(Math.E)">e</button>
+                    <button class="calculator-button operator" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button class="calculator-button">4</button>
+                    <button class="calculator-button">5</button>
+                    <button class="calculator-button">6</button>
+                    <button class="calculator-button function" onclick="appendToDisplay('**')">x²</button>
+                    <button class="calculator-button operator" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button class="calculator-button">1</button>
+                    <button class="calculator-button">2</button>
+                    <button class="calculator-button">3</button>
+                    <button class="calculator-button">.</button>
+                    <button class="calculator-button equals" onclick="calculate()">=</button>
+                    
+                    <button class="calculator-button" onclick="appendToDisplay('0')" style="grid-column: span 2;">0</button>
+                `;
+                
+                // 重新绑定数字按钮事件
+                const numberButtons = buttons.querySelectorAll('.calculator-button:not([class*="function"]):not([class*="operator"]):not([class*="clear"]):not([class*="equals"])');
+                numberButtons.forEach(button => {
+                    if (button.textContent.match(/[0-9.]/)) {
+                        button.onclick = () => appendToDisplay(button.textContent);
+                    }
+                });
+            } else {
+                buttons.innerHTML = `
+                    <button class="calculator-button clear" onclick="clearDisplay()">C</button>
+                    <button class="calculator-button" onclick="appendToDisplay('/')">/</button>
+                    <button class="calculator-button" onclick="appendToDisplay('*')">×</button>
+                    <button class="calculator-button" onclick="deleteLast()">⌫</button>
+                    
+                    <button class="calculator-button" onclick="appendToDisplay('7')">7</button>
+                    <button class="calculator-button" onclick="appendToDisplay('8')">8</button>
+                    <button class="calculator-button" onclick="appendToDisplay('9')">9</button>
+                    <button class="calculator-button operator" onclick="appendToDisplay('-')">-</button>
+                    
+                    <button class="calculator-button" onclick="appendToDisplay('4')">4</button>
+                    <button class="calculator-button" onclick="appendToDisplay('5')">5</button>
+                    <button class="calculator-button" onclick="appendToDisplay('6')">6</button>
+                    <button class="calculator-button operator" onclick="appendToDisplay('+')">+</button>
+                    
+                    <button class="calculator-button" onclick="appendToDisplay('1')">1</button>
+                    <button class="calculator-button" onclick="appendToDisplay('2')">2</button>
+                    <button class="calculator-button" onclick="appendToDisplay('3')">3</button>
+                    <button class="calculator-button" onclick="appendToDisplay('.')">.</button>
+                    
+                    <button class="calculator-button" onclick="appendToDisplay('0')">0</button>
+                    <button class="calculator-button" onclick="appendToDisplay('(')">(</button>
+                    <button class="calculator-button" onclick="appendToDisplay(')')">)</button>
+                    <button class="calculator-button equals" onclick="calculate()">=</button>
+                `;
+            }
+        }
+
+        function appendFunction(func) {
+            switch(func) {
+                case 'sin':
+                    currentInput += 'Math.sin(';
+                    break;
+                case 'cos':
+                    currentInput += 'Math.cos(';
+                    break;
+                case 'tan':
+                    currentInput += 'Math.tan(';
+                    break;
+                case 'log':
+                    currentInput += 'Math.log10(';
+                    break;
+                case 'ln':
+                    currentInput += 'Math.log(';
+                    break;
+                case 'sqrt':
+                    currentInput += 'Math.sqrt(';
+                    break;
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                let expression = currentInput
+                    .replace(/×/g, '*')
+                    .replace(/÷/g, '/')
+                    .replace(/\^/g, '**')
+                    .replace(/π/g, 'Math.PI')
+                    .replace(/e/g, 'Math.E')
+                    .replace(/%/g, '/100');
+                
+                previousInput = currentInput;
+                let result = eval(expression);
+                
+                if (isNaN(result) || !isFinite(result)) {
+                    currentInput = 'Error';
+                } else {
+                    currentInput = parseFloat(result.toPrecision(12)).toString();
+                    history.textContent = previousInput + ' = ' + currentInput;
+                }
+            } catch (error) {
+                currentInput = 'Error';
+            }
+            updateDisplay();
+        }
+
+        // 键盘支持
+        document.addEventListener('keydown', function(event) {
+            if (event.key >= '0' && event.key <= '9') {
+                appendToDisplay(event.key);
+            } else if (event.key === '.') {
+                appendToDisplay('.');
+            } else if (event.key === '+') {
+                appendToDisplay('+');
+            } else if (event.key === '-') {
+                appendToDisplay('-');
+            } else if (event.key === '*') {
+                appendToDisplay('*');
+            } else if (event.key === '/') {
+                appendToDisplay('/');
+            } else if (event.key === '(') {
+                appendToDisplay('(');
+            } else if (event.key === ')') {
+                appendToDisplay(')');
+            } else if (event.key === 'Enter' || event.key === '=') {
+                calculate();
+            } else if (event.key === 'Backspace') {
+                deleteLast();
+            } else if (event.key === 'Escape') {
+                clearDisplay();
+            }
+        });
+
+        // 初始化
+        setMode('standard');
+    </script>
+</body>
+</html>

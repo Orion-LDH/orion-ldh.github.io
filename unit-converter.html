@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单位换算器 - LDH's Blog</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .converter-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin: 1rem 0;
+        }
+        .converter-form {
+            display: grid;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+        .form-group input, .form-group select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .result-display {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .converter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .converter-tab {
+            padding: 0.5rem 1rem;
+            background: #e9ecef;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .converter-tab.active {
+            background: #007bff;
+            color: white;
+        }
+        .converter-tab:hover {
+            background: #dee2e6;
+        }
+        .converter-tab.active:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">LDH's Blog</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="game.html">游戏</a></li> 
+                    <li><a href="tools.html">工具</a></li>
+                    <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>单位换算器</h1>
+            <p>支持多种单位的实时转换</p>
+            <a href="tools.html" class="btn"><i class="fas fa-arrow-left"></i> 返回工具列表</a>
+        </div>
+    </section>
+
+    <!-- Converter -->
+    <div class="container">
+        <div class="converter-section">
+            <div class="converter-tabs">
+                <button class="converter-tab active" onclick="switchTab('length')">长度</button>
+                <button class="converter-tab" onclick="switchTab('weight')">重量</button>
+                <button class="converter-tab" onclick="switchTab('temperature')">温度</button>
+                <button class="converter-tab" onclick="switchTab('area')">面积</button>
+                <button class="converter-tab" onclick="switchTab('volume')">体积</button>
+            </div>
+
+            <div id="length-converter" class="converter-form">
+                <div class="form-group">
+                    <label>长度</label>
+                    <input type="number" id="length-input" placeholder="输入数值" oninput="convertLength()">
+                </div>
+                <div class="form-group">
+                    <label>从</label>
+                    <select id="length-from" onchange="convertLength()">
+                        <option value="mm">毫米 (mm)</option>
+                        <option value="cm">厘米 (cm)</option>
+                        <option value="m" selected>米 (m)</option>
+                        <option value="km">千米 (km)</option>
+                        <option value="in">英寸 (in)</option>
+                        <option value="ft">英尺 (ft)</option>
+                        <option value="yd">码 (yd)</option>
+                        <option value="mi">英里 (mi)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>到</label>
+                    <select id="length-to" onchange="convertLength()">
+                        <option value="mm">毫米 (mm)</option>
+                        <option value="cm" selected>厘米 (cm)</option>
+                        <option value="m">米 (m)</option>
+                        <option value="km">千米 (km)</option>
+                        <option value="in">英寸 (in)</option>
+                        <option value="ft">英尺 (ft)</option>
+                        <option value="yd">码 (yd)</option>
+                        <option value="mi">英里 (mi)</option>
+                    </select>
+                </div>
+                <div class="result-display" id="length-result">0 cm</div>
+            </div>
+
+            <div id="weight-converter" class="converter-form" style="display: none;">
+                <div class="form-group">
+                    <label>重量</label>
+                    <input type="number" id="weight-input" placeholder="输入数值" oninput="convertWeight()">
+                </div>
+                <div class="form-group">
+                    <label>从</label>
+                    <select id="weight-from" onchange="convertWeight()">
+                        <option value="mg">毫克 (mg)</option>
+                        <option value="g">克 (g)</option>
+                        <option value="kg" selected>千克 (kg)</option>
+                        <option value="t">吨 (t)</option>
+                        <option value="lb">磅 (lb)</option>
+                        <option value="oz">盎司 (oz)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>到</label>
+                    <select id="weight-to" onchange="convertWeight()">
+                        <option value="mg">毫克 (mg)</option>
+                        <option value="g">克 (g)</option>
+                        <option value="kg" selected>千克 (kg)</option>
+                        <option value="t">吨 (t)</option>
+                        <option value="lb">磅 (lb)</option>
+                        <option value="oz">盎司 (oz)</option>
+                    </select>
+                </div>
+                <div class="result-display" id="weight-result">0 kg</div>
+            </div>
+
+            <div id="temperature-converter" class="converter-form" style="display: none;">
+                <div class="form-group">
+                    <label>温度</label>
+                    <input type="number" id="temp-input" placeholder="输入数值" oninput="convertTemperature()">
+                </div>
+                <div class="form-group">
+                    <label>从</label>
+                    <select id="temp-from" onchange="convertTemperature()">
+                        <option value="c" selected>摄氏度 (°C)</option>
+                        <option value="f">华氏度 (°F)</option>
+                        <option value="k">开尔文 (K)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>到</label>
+                    <select id="temp-to" onchange="convertTemperature()">
+                        <option value="c">摄氏度 (°C)</option>
+                        <option value="f" selected>华氏度 (°F)</option>
+                        <option value="k">开尔文 (K)</option>
+                    </select>
+                </div>
+                <div class="result-display" id="temp-result">32 °F</div>
+            </div>
+
+            <div id="area-converter" class="converter-form" style="display: none;">
+                <div class="form-group">
+                    <label>面积</label>
+                    <input type="number" id="area-input" placeholder="输入数值" oninput="convertArea()">
+                </div>
+                <div class="form-group">
+                    <label>从</label>
+                    <select id="area-from" onchange="convertArea()">
+                        <option value="mm2">平方毫米 (mm²)</option>
+                        <option value="cm2">平方厘米 (cm²)</option>
+                        <option value="m2" selected>平方米 (m²)</option>
+                        <option value="km2">平方千米 (km²)</option>
+                        <option value="ha">公顷 (ha)</option>
+                        <option value="acre">英亩 (acre)</option>
+                        <option value="ft2">平方英尺 (ft²)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>到</label>
+                    <select id="area-to" onchange="convertArea()">
+                        <option value="mm2">平方毫米 (mm²)</option>
+                        <option value="cm2">平方厘米 (cm²)</option>
+                        <option value="m2" selected>平方米 (m²)</option>
+                        <option value="km2">平方千米 (km²)</option>
+                        <option value="ha">公顷 (ha)</option>
+                        <option value="acre">英亩 (acre)</option>
+                        <option value="ft2">平方英尺 (ft²)</option>
+                    </select>
+                </div>
+                <div class="result-display" id="area-result">0 m²</div>
+            </div>
+
+            <div id="volume-converter" class="converter-form" style="display: none;">
+                <div class="form-group">
+                    <label>体积</label>
+                    <input type="number" id="volume-input" placeholder="输入数值" oninput="convertVolume()">
+                </div>
+                <div class="form-group">
+                    <label>从</label>
+                    <select id="volume-from" onchange="convertVolume()">
+                        <option value="ml">毫升 (ml)</option>
+                        <option value="l" selected>升 (l)</option>
+                        <option value="m3">立方米 (m³)</option>
+                        <option value="gal">加仑 (gal)</option>
+                        <option value="qt">夸脱 (qt)</option>
+                        <option value="cup">杯 (cup)</option>
+                        <option value="oz">盎司 (oz)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>到</label>
+                    <select id="volume-to" onchange="convertVolume()">
+                        <option value="ml">毫升 (ml)</option>
+                        <option value="l" selected>升 (l)</option>
+                        <option value="m3">立方米 (m³)</option>
+                        <option value="gal">加仑 (gal)</option>
+                        <option value="qt">夸脱 (qt)</option>
+                        <option value="cup">杯 (cup)</option>
+                        <option value="oz">盎司 (oz)</option>
+                    </select>
+                </div>
+                <div class="result-display" id="volume-result">0 l</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <ul class="footer-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="game.html">游戏</a></li> 
+                <li><a href="tools.html">工具</a></li>
+                <li><a href="about.html">关于</a></li>
+            </ul>
+            <div class="copyright">
+                &copy; 2024 LDH's Blog. All rights reserved. | GitHub: <a href="https://github.com/Orion-LDH" target="_blank">Orion-LDH</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(type) {
+            // Hide all converters
+            document.querySelectorAll('.converter-form').forEach(form => form.style.display = 'none');
+            document.querySelectorAll('.converter-tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected converter
+            document.getElementById(type + '-converter').style.display = 'block';
+            event.target.classList.add('active');
+        }
+
+        function convertLength() {
+            const value = parseFloat(document.getElementById('length-input').value) || 0;
+            const from = document.getElementById('length-from').value;
+            const to = document.getElementById('length-to').value;
+            
+            const units = {
+                mm: 0.001,
+                cm: 0.01,
+                m: 1,
+                km: 1000,
+                in: 0.0254,
+                ft: 0.3048,
+                yd: 0.9144,
+                mi: 1609.344
+            };
+            
+            const result = (value * units[from]) / units[to];
+            document.getElementById('length-result').textContent = result.toFixed(4) + ' ' + to;
+        }
+
+        function convertWeight() {
+            const value = parseFloat(document.getElementById('weight-input').value) || 0;
+            const from = document.getElementById('weight-from').value;
+            const to = document.getElementById('weight-to').value;
+            
+            const units = {
+                mg: 0.001,
+                g: 1,
+                kg: 1000,
+                t: 1000000,
+                lb: 453.592,
+                oz: 28.3495
+            };
+            
+            const result = (value * units[from]) / units[to];
+            document.getElementById('weight-result').textContent = result.toFixed(4) + ' ' + to;
+        }
+
+        function convertTemperature() {
+            const value = parseFloat(document.getElementById('temp-input').value) || 0;
+            const from = document.getElementById('temp-from').value;
+            const to = document.getElementById('temp-to').value;
+            
+            let result;
+            
+            if (from === to) {
+                result = value;
+            } else if (from === 'c' && to === 'f') {
+                result = (value * 9/5) + 32;
+            } else if (from === 'c' && to === 'k') {
+                result = value + 273.15;
+            } else if (from === 'f' && to === 'c') {
+                result = (value - 32) * 5/9;
+            } else if (from === 'f' && to === 'k') {
+                result = (value - 32) * 5/9 + 273.15;
+            } else if (from === 'k' && to === 'c') {
+                result = value - 273.15;
+            } else if (from === 'k' && to === 'f') {
+                result = (value - 273.15) * 9/5 + 32;
+            }
+            
+            document.getElementById('temp-result').textContent = result.toFixed(2) + ' ' + to.toUpperCase();
+        }
+
+        function convertArea() {
+            const value = parseFloat(document.getElementById('area-input').value) || 0;
+            const from = document.getElementById('area-from').value;
+            const to = document.getElementById('area-to').value;
+            
+            const units = {
+                mm2: 0.000001,
+                cm2: 0.0001,
+                m2: 1,
+                km2: 1000000,
+                ha: 10000,
+                acre: 4046.86,
+                ft2: 0.092903
+            };
+            
+            const result = (value * units[from]) / units[to];
+            document.getElementById('area-result').textContent = result.toFixed(4) + ' ' + to;
+        }
+
+        function convertVolume() {
+            const value = parseFloat(document.getElementById('volume-input').value) || 0;
+            const from = document.getElementById('volume-from').value;
+            const to = document.getElementById('volume-to').value;
+            
+            const units = {
+                ml: 0.001,
+                l: 1,
+                m3: 1000,
+                gal: 3.78541,
+                qt: 0.946353,
+                cup: 0.236588,
+                oz: 0.0295735
+            };
+            
+            const result = (value * units[from]) / units[to];
+            document.getElementById('volume-result').textContent = result.toFixed(4) + ' ' + to;
+        }
+    </script>
+</body>
+</html>

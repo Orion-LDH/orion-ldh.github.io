@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计时器 - LDH's Blog</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .timer-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+            text-align: center;
+        }
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            font-family: monospace;
+            margin: 1.5rem 0;
+            color: #333;
+        }
+        .timer-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .time-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .time-input input {
+            width: 60px;
+            padding: 0.5rem;
+            font-size: 1.2rem;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .time-input label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .timer-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .start-btn {
+            background: #28a745;
+            color: white;
+        }
+        .start-btn:hover {
+            background: #1e7e34;
+        }
+        .pause-btn {
+            background: #ffc107;
+            color: black;
+        }
+        .pause-btn:hover {
+            background: #e0a800;
+        }
+        .reset-btn {
+            background: #dc3545;
+            color: white;
+        }
+        .reset-btn:hover {
+            background: #c82333;
+        }
+        .timer-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .progress-ring {
+            margin: 1rem auto;
+            width: 200px;
+            height: 200px;
+            position: relative;
+        }
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .progress-ring__circle {
+            stroke: #007bff;
+            stroke-width: 8;
+            fill: transparent;
+            stroke-dasharray: 565.48;
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 0.3s;
+        }
+        .progress-ring__background {
+            stroke: #e9ecef;
+            stroke-width: 8;
+            fill: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">LDH's Blog</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="game.html">游戏</a></li> 
+                    <li><a href="tools.html">工具</a></li>
+                    <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>计时器</h1>
+            <p>简单易用的倒计时工具</p>
+            <a href="tools.html" class="btn"><i class="fas fa-arrow-left"></i> 返回工具列表</a>
+        </div>
+    </section>
+
+    <!-- Timer -->
+    <div class="container">
+        <div class="timer-container">
+            <div class="timer-inputs">
+                <div class="time-input">
+                    <input type="number" id="hours" min="0" max="99" value="0">
+                    <label>时</label>
+                </div>
+                <div class="time-input">
+                    <input type="number" id="minutes" min="0" max="59" value="5">
+                    <label>分</label>
+                </div>
+                <div class="time-input">
+                    <input type="number" id="seconds" min="0" max="59" value="0">
+                    <label>秒</label>
+                </div>
+            </div>
+
+            <div class="progress-ring">
+                <svg>
+                    <circle class="progress-ring__background" cx="100" cy="100" r="90"></circle>
+                    <circle class="progress-ring__circle" cx="100" cy="100" r="90" id="progress-circle"></circle>
+                </svg>
+            </div>
+
+            <div class="timer-display" id="timer-display">05:00</div>
+
+            <div class="timer-controls">
+                <button class="timer-btn start-btn" id="start-btn" onclick="startTimer()">
+                    <i class="fas fa-play"></i> 开始
+                </button>
+                <button class="timer-btn pause-btn" id="pause-btn" onclick="pauseTimer()" disabled>
+                    <i class="fas fa-pause"></i> 暂停
+                </button>
+                <button class="timer-btn reset-btn" id="reset-btn" onclick="resetTimer()">
+                    <i class="fas fa-redo"></i> 重置
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <ul class="footer-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="tools.html">工具</a></li>  
+                <li><a href="about.html">关于</a></li>
+            </ul>
+            <div class="copyright">
+                &copy; 2024 LDH's Blog. All rights reserved. | GitHub: <a href="https://github.com/Orion-LDH" target="_blank">Orion-LDH</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let timerInterval = null;
+        let timeLeft = 0;
+        let totalTime = 0;
+
+        function updateDisplay() {
+            const hours = Math.floor(timeLeft / 3600);
+            const minutes = Math.floor((timeLeft % 3600) / 60);
+            const seconds = timeLeft % 60;
+            
+            document.getElementById('timer-display').textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // Update progress circle
+            const progress = (totalTime - timeLeft) / totalTime;
+            const circumference = 2 * Math.PI * 90;
+            const offset = circumference - (progress * circumference);
+            document.getElementById('progress-circle').style.strokeDashoffset = offset;
+        }
+
+        function startTimer() {
+            if (timerInterval) return;
+
+            if (timeLeft === 0) {
+                const hours = parseInt(document.getElementById('hours').value) || 0;
+                const minutes = parseInt(document.getElementById('minutes').value) || 0;
+                const seconds = parseInt(document.getElementById('seconds').value) || 0;
+                
+                timeLeft = hours * 3600 + minutes * 60 + seconds;
+                totalTime = timeLeft;
+            }
+
+            if (timeLeft <= 0) {
+                alert('请设置有效的时间！');
+                return;
+            }
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    alert('时间到！');
+                    resetTimer();
+                }
+            }, 1000);
+
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('pause-btn').disabled = false;
+            document.getElementById('hours').disabled = true;
+            document.getElementById('minutes').disabled = true;
+            document.getElementById('seconds').disabled = true;
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                document.getElementById('start-btn').disabled = false;
+                document.getElementById('pause-btn').disabled = true;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timeLeft = 0;
+            totalTime = 0;
+            
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('pause-btn').disabled = true;
+            document.getElementById('hours').disabled = false;
+            document.getElementById('minutes').disabled = false;
+            document.getElementById('seconds').disabled = false;
+            
+            updateDisplay();
+            document.getElementById('progress-circle').style.strokeDashoffset = 0;
+        }
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>

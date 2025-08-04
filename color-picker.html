@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>颜色选择器 - LDH's Blog</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .color-picker {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .color-display {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .color-info {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .color-format {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .color-format label {
+            font-weight: bold;
+            min-width: 80px;
+        }
+        .color-format input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .color-format button {
+            padding: 0.5rem 1rem;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .color-sliders {
+            display: grid;
+            gap: 1rem;
+        }
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .slider-group label {
+            min-width: 20px;
+            font-weight: bold;
+        }
+        .slider-group input[type="range"] {
+            flex: 1;
+        }
+        .slider-group span {
+            min-width: 40px;
+            text-align: center;
+            font-family: monospace;
+        }
+        .color-picker-input {
+            margin-bottom: 1rem;
+        }
+        .color-picker-input input[type="color"] {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div class="logo">LDH's Blog</div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="game.html">游戏</a></li> 
+                    <li><a href="tools.html">工具</a></li>
+                    <li><a href="about.html">关于</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <h1>颜色选择器</h1>
+            <p>专业的网页颜色选择工具，支持多种格式</p>
+            <a href="tools.html" class="btn"><i class="fas fa-arrow-left"></i> 返回工具列表</a>
+        </div>
+    </section>
+
+    <!-- Color Picker -->
+    <div class="container">
+        <div class="color-picker">
+            <div class="color-picker-input">
+                <input type="color" id="color-picker" value="#007bff" oninput="updateColorFromPicker()">
+            </div>
+            
+            <div class="color-display" id="color-display"></div>
+            
+            <div class="color-info">
+                <div class="color-format">
+                    <label>HEX</label>
+                    <input type="text" id="hex-value" value="#007bff" readonly>
+                    <button onclick="copyToClipboard('hex')">复制</button>
+                </div>
+                
+                <div class="color-format">
+                    <label>RGB</label>
+                    <input type="text" id="rgb-value" value="rgb(0, 123, 255)" readonly>
+                    <button onclick="copyToClipboard('rgb')">复制</button>
+                </div>
+                
+                <div class="color-format">
+                    <label>HSL</label>
+                    <input type="text" id="hsl-value" value="hsl(211, 100%, 50%)" readonly>
+                    <button onclick="copyToClipboard('hsl')">复制</button>
+                </div>
+            </div>
+            
+            <div class="color-sliders">
+                <div class="slider-group">
+                    <label>R</label>
+                    <input type="range" id="red-slider" min="0" max="255" value="0" oninput="updateFromSliders()">
+                    <span id="red-value">0</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>G</label>
+                    <input type="range" id="green-slider" min="0" max="255" value="123" oninput="updateFromSliders()">
+                    <span id="green-value">123</span>
+                </div>
+                
+                <div class="slider-group">
+                    <label>B</label>
+                    <input type="range" id="blue-slider" min="0" max="255" value="255" oninput="updateFromSliders()">
+                    <span id="blue-value">255</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <ul class="footer-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="game.html">游戏</a></li> 
+                <li><a href="tools.html">工具</a></li>
+                <li><a href="about.html">关于</a></li>
+            </ul>
+            <div class="copyright">
+                &copy; 2024 LDH's Blog. All rights reserved. | GitHub: <a href="https://github.com/Orion-LDH" target="_blank">Orion-LDH</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function updateColor(r, g, b) {
+            const hex = rgbToHex(r, g, b);
+            const hsl = rgbToHsl(r, g, b);
+            
+            document.getElementById('color-display').style.backgroundColor = hex;
+            document.getElementById('hex-value').value = hex;
+            document.getElementById('rgb-value').value = `rgb(${r}, ${g}, ${b})`;
+            document.getElementById('hsl-value').value = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
+            
+            document.getElementById('color-picker').value = hex;
+            document.getElementById('red-slider').value = r;
+            document.getElementById('green-slider').value = g;
+            document.getElementById('blue-slider').value = b;
+            
+            document.getElementById('red-value').textContent = r;
+            document.getElementById('green-value').textContent = g;
+            document.getElementById('blue-value').textContent = b;
+        }
+
+        function updateColorFromPicker() {
+            const hex = document.getElementById('color-picker').value;
+            const rgb = hexToRgb(hex);
+            if (rgb) {
+                updateColor(rgb.r, rgb.g, rgb.b);
+            }
+        }
+
+        function updateFromSliders() {
+            const r = parseInt(document.getElementById('red-slider').value);
+            const g = parseInt(document.getElementById('green-slider').value);
+            const b = parseInt(document.getElementById('blue-slider').value);
+            updateColor(r, g, b);
+        }
+
+        function copyToClipboard(type) {
+            let text = '';
+            switch (type) {
+                case 'hex':
+                    text = document.getElementById('hex-value').value;
+                    break;
+                case 'rgb':
+                    text = document.getElementById('rgb-value').value;
+                    break;
+                case 'hsl':
+                    text = document.getElementById('hsl-value').value;
+                    break;
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('已复制到剪贴板: ' + text);
+            });
+        }
+
+        // 初始化
+        updateColor(0, 123, 255);
+    </script>
+</body>
+</html>
